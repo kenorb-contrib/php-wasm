@@ -99,7 +99,7 @@ third_party/libxml2:
 ########### Build the objects. ###########
 
 third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c source/sqlite3.c
-# 	${DOCKER_RUN_IN_PHP} ./buildconf --force
+	${DOCKER_RUN_IN_PHP} ./buildconf --force
 	${DOCKER_RUN_IN_PHP} bash -c "emconfigure ./configure \
 		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		--enable-embed=static \

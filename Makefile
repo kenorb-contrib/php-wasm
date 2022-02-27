@@ -115,13 +115,13 @@ third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c sourc
 		--enable-pdo       \
 		--with-pdo-sqlite  \
 		--disable-rpath    \
-		--disable-phpdbg   \
 		--without-pear     \
 		--with-valgrind=no \
 		--without-pcre-jit \
 		--enable-bcmath    \
 		--enable-json      \
 		--enable-ctype     \
+		--enable-tokenizer \
 		--enable-mbstring  \
 		--disable-mbregex  \
 		--enable-tokenizer \
@@ -156,10 +156,11 @@ lib/lib/libxml2.la: third_party/libxml2/.gitignore
 
 ########### Build the final files. ###########
 FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
-	-o ../../build/php-${ENVIRONMENT}.js \
-	-v \
 	--clear-cache \
 	--llvm-lto 2                     \
+	-O3 \
+	-g2 \
+	-o ../../build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.js \
 	-s EXPORTED_FUNCTIONS='["_pib_init", "_pib_destroy", "_pib_run", "_pib_exec" "_pib_refresh", "_main", "_php_embed_init", "_php_embed_shutdown", "_php_embed_shutdown", "_zend_eval_string", "_exec_callback", "_del_callback"]' \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "UTF8ToString", "lengthBytesUTF8"]' \
 	-s ENVIRONMENT=${ENVIRONMENT}    \
@@ -172,10 +173,16 @@ FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
 	-s MODULARIZE=1                  \
 	-s INVOKE_RUN=0                  \
 	-s USE_ZLIB=1                    \
+	-v													     \
 		/src/lib/pib_eval.o /src/lib/libphp7.a /src/lib/lib/libxml2.a
 
-
-php-web.wasm: ENVIRONMENT=web
+php-web-drupal.wasm: ENVIRONMENT=web-drupal
+php-web-drupal.wasm: lib/libphp7.a lib/pib_eval.o source/**.c source/**.h third_party/drupal-7.59/README.txt
+	@ echo -e "\e[33mBuilding PHP for web (drupal)"
+	@ ${FINAL_BUILD} --preload-file ${PRELOAD_ASSETS} -s ENVIRONMENT=web
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/app/assets
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/public
 
 php-web.wasm: ENVIRONMENT=web
 php-web.wasm: lib/libphp7.a lib/pib_eval.o source/**.c source/**.h

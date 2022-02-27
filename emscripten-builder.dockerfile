@@ -21,4 +21,5 @@ RUN set -euxo pipefail;\
 		re2c \
 		gdb \
 		git \
-		pv
+		pv \
+		libxml2-dev

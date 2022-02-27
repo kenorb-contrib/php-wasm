@@ -115,6 +115,7 @@ third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c sourc
 		--enable-pdo       \
 		--with-pdo-sqlite  \
 		--disable-rpath    \
+		--disable-phpdbg   \
 		--without-pear     \
 		--with-valgrind=no \
 		--without-pcre-jit \

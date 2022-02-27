@@ -72,6 +72,20 @@ third_party/php7.4-src/ext/vrzno/vrzno.c: third_party/php7.4-src/patched
 		--single-branch          \
 		--depth 1
 
+third_party/drupal-7.59/README.txt:
+	@ echo -e "\e[33mDownloading and patching Drupal"
+	@ wget https://ftp.drupal.org/files/projects/drupal-7.59.zip
+	@ ${DOCKER_RUN} unzip drupal-7.59.zip
+	@ ${DOCKER_RUN} rm -v drupal-7.59.zip
+	@ ${DOCKER_RUN} mv drupal-7.59 third_party/drupal-7.59
+	@ ${DOCKER_RUN} git apply --no-index patch/drupal-7.59.patch
+	@ ${DOCKER_RUN} cp -r extras/drupal-7-settings.php third_party/drupal-7.59/sites/default/settings.php
+	@ ${DOCKER_RUN} cp -r extras/drowser-files/.ht.sqlite third_party/drupal-7.59/sites/default/files/.ht.sqlite
+	@ ${DOCKER_RUN} cp -r extras/drowser-files/* third_party/drupal-7.59/sites/default/files
+	@ ${DOCKER_RUN} cp -r extras/drowser-logo.png third_party/drupal-7.59/sites/default/logo.png
+	@ ${DOCKER_RUN} mkdir -p third_party/php7.4-src/preload/
+	@ ${DOCKER_RUN} cp -r third_party/drupal-7.59 third_party/drupal-7.59 third_party/php7.4-src/preload/
+
 
 third_party/libxml2/.gitignore:
 	@ echo -e "\e[33mDownloading LibXML2"
@@ -141,7 +155,6 @@ lib/lib/libxml2.la: third_party/libxml2/.gitignore
 	${DOCKER_RUN_IN_LIBXML} emmake make install | ${TIMER}
 
 ########### Build the final files. ###########
-# -s EXPORTED_FUNCTIONS='["_pib_init", "_pib_destroy", "_pib_run", "_pib_exec" "_pib_refresh", "_main", "_php_embed_init", "_php_embed_shutdown", "_php_embed_shutdown", "_zend_eval_string", "_exec_callback", "_del_callback"]'
 FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
 	-o ../../build/php-${ENVIRONMENT}.js \
 	-v \

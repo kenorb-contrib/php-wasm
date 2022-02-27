@@ -33,7 +33,7 @@ DOCKER_RUN_IN_LIBXML =${DOCKER_ENV} -w /src/third_party/libxml2/ emscripten-buil
 TIMER=(which pv > /dev/null && pv --name '${@}' || cat)
 .PHONY: web all clean show-ports image js hooks push-image pull-image
 
-all: php-web.wasm php-webview.wasm php-node.wasm php-shell.wasm php-worker.wasm js
+all: php-web.wasm php-web-drupal.wasm php-webview.wasm php-node.wasm php-shell.wasm php-worker.wasm js
 web: lib/pib_eval.o php-web.wasm
 	@ echo "Done!"
 
@@ -84,7 +84,7 @@ third_party/drupal-7.59/README.txt:
 	@ ${DOCKER_RUN} cp -r extras/drowser-files/* third_party/drupal-7.59/sites/default/files
 	@ ${DOCKER_RUN} cp -r extras/drowser-logo.png third_party/drupal-7.59/sites/default/logo.png
 	@ ${DOCKER_RUN} mkdir -p third_party/php7.4-src/preload/
-	@ ${DOCKER_RUN} cp -r third_party/drupal-7.59 third_party/drupal-7.59 third_party/php7.4-src/preload/
+	@ ${DOCKER_RUN} cp -r third_party/drupal-7.59 third_party/php7.4-src/preload/
 
 
 third_party/libxml2/.gitignore:
@@ -115,6 +115,7 @@ third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c sourc
 		--enable-pdo       \
 		--with-pdo-sqlite  \
 		--disable-rpath    \
+		--disable-phpdbg   \
 		--without-pear     \
 		--with-valgrind=no \
 		--without-pcre-jit \
@@ -133,7 +134,7 @@ third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c sourc
 
 lib/libphp7.a: third_party/php7.4-src/configure third_party/php7.4-src/patched third_party/php7.4-src/**.c source/sqlite3.c
 	@ echo -e "\e[33mBuilding PHP symbol files"
-	@ ${DOCKER_RUN_IN_PHP} emmake make -j4
+	@ ${DOCKER_RUN_IN_PHP} emmake make -j8
 	@ ${DOCKER_RUN} cp -v third_party/php7.4-src/.libs/libphp7.la third_party/php7.4-src/.libs/libphp7.a lib/
 
 lib/pib_eval.o: lib/libphp7.a source/pib_eval.c
@@ -156,10 +157,8 @@ lib/lib/libxml2.la: third_party/libxml2/.gitignore
 
 ########### Build the final files. ###########
 FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
-	-o ../../build/php-${ENVIRONMENT}.js \
+	-o ../../build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.js \
 	-v \
-	--clear-cache \
-	-O3 \
 	-g2 \
 	--llvm-lto 2                     \
 	-s EXPORTED_FUNCTIONS='["_pib_init", "_pib_destroy", "_pib_run", "_pib_exec" "_pib_refresh", "_main", "_php_embed_init", "_php_embed_shutdown", "_php_embed_shutdown", "_zend_eval_string", "_exec_callback", "_del_callback"]' \
@@ -176,16 +175,21 @@ FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
 	-s USE_ZLIB=1                    \
 		/src/lib/pib_eval.o /src/lib/libphp7.a /src/lib/lib/libxml2.a
 
-php-web.wasm: ENVIRONMENT=web
+php-web-drupal.wasm: ENVIRONMENT=web-drupal
+php-web-drupal.wasm: lib/libphp7.a lib/pib_eval.o source/**.c source/**.h third_party/drupal-7.59/README.txt
+	@ echo -e "\e[33mBuilding PHP for web (Drupal)"
+	@ ${FINAL_BUILD} --preload-file ${PRELOAD_ASSETS} -s ENVIRONMENT=web
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/app/assets
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/public
 
 php-web.wasm: ENVIRONMENT=web
 php-web.wasm: lib/libphp7.a lib/pib_eval.o source/**.c source/**.h
 	@ echo -e "\e[33mBuilding PHP for web"
 	@ ${FINAL_BUILD}
-	@ ${DOCKER_RUN} find *.wasm
-	#@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./
-	#@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/app/assets
-	#@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/public
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/app/assets
+	@ ${DOCKER_RUN} cp -v build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.* ./docs-source/public
 
 php-worker.wasm: ENVIRONMENT=worker
 php-worker.wasm: lib/libphp7.a lib/pib_eval.o source/**.c source/**.h

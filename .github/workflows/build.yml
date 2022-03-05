@@ -1,0 +1,20 @@
+---
+name: Build
+
+# yamllint disable rule:truthy
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  Build-Web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make web
+      - run: git status

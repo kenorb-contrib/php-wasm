@@ -13,8 +13,9 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
+        exclude: (\.data$|/(assets|preload)/)
       - id: trailing-whitespace
-        exclude: (\.data)$
+        exclude: (\.data$|/(assets|preload)/)
 
   - repo: https://github.com/igorshubovych/markdownlint-cli.git
     rev: v0.29.0

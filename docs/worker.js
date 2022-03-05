@@ -173,7 +173,7 @@ self.addEventListener('message', function (event) {});
 });
 
 require.register("___globals___", function(exports, require, module) {
-  
+
 });})();require('___globals___');
 
 require('worker');

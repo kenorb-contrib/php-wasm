@@ -518,7 +518,7 @@ require.register("php-wasm/php-web-drupal.js", function(exports, require, module
   (function() {
     var PHP = (function() {
   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
-  
+
   return (
 function(PHP) {
   PHP = PHP || {};
@@ -941,6 +941,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
-  
-});})();require('___globals___');
 
+});})();require('___globals___');

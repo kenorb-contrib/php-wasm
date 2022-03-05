@@ -129,9 +129,9 @@ third_party/php7.4-src/configure: third_party/php7.4-src/ext/vrzno/vrzno.c sourc
 		--with-gd          \
 		--disable-libtool-lock \
 		--disable-short-tags"
-		
-		
-	
+
+
+
 
 lib/libphp7.a: third_party/php7.4-src/configure third_party/php7.4-src/patched third_party/php7.4-src/**.c source/sqlite3.c
 	@ echo -e "\e[33mBuilding PHP symbol files"

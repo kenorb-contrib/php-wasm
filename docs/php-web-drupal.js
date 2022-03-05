@@ -1,7 +1,7 @@
 
 var PHP = (function() {
   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
-  
+
   return (
 function(PHP) {
   PHP = PHP || {};
@@ -19,4 +19,3 @@ if (typeof exports === 'object' && typeof module === 'object')
       define([], function() { return PHP; });
     else if (typeof exports === 'object')
       exports["PHP"] = PHP;
-    

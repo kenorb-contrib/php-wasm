@@ -1,5 +1,4 @@
 FROM trzeci/emscripten:1.39.18-fastcomp
-MAINTAINER Sean Morris <sean@seanmorr.is>
 
 SHELL ["/bin/bash", "-c"]
 

@@ -20,7 +20,7 @@ index a91c398..dc4b14d 100644
 +  // ini_set('session.cache_limiter', '');
 +  // // Use httponly session cookies.
 +  // ini_set('session.cookie_httponly', '1');
- 
+
    // Set sane locale settings, to ensure consistent string, dates, times and
    // numbers handling.
 @@ -784,26 +784,26 @@ function drupal_settings_initialize() {
@@ -78,7 +78,7 @@ index a91c398..dc4b14d 100644
 +  // $prefix = ini_get('session.cookie_secure') ? 'SSESS' : 'SESS';
 +  // session_name($prefix . substr(hash('sha256', $session_name), 0, 32));
  }
- 
+
  /**
 diff --git a/third_party/drupal-7.59/includes/common.inc b/third_party/drupal-7.59/includes/common.inc
 index f61d1eb..bdbd4ac 100644
@@ -91,7 +91,7 @@ index f61d1eb..bdbd4ac 100644
 -  return implode($feeds, $delimiter);
 +  return implode($delimiter, $feeds);
  }
- 
+
  /**
 @@ -6592,6 +6592,6 @@ function element_children(&$elements, $sort = FALSE) {
    $children = array();
@@ -119,7 +119,7 @@ index 53844d8..dee8808 100644
 +++ b/third_party/drupal-7.59/modules/system/system.module
 @@ -2131,7 +2131,11 @@ function system_admin_menu_block($item) {
    }
- 
+
    if (!isset($item['mlid'])) {
 -    $item += db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = :path AND module = 'system'", array(':path' => $item['path']))->fetchAssoc();
 +    $res = db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = :path AND module = 'system'", array(':path' => $item['path']))->fetchAssoc();
@@ -128,7 +128,7 @@ index 53844d8..dee8808 100644
 +      $item += $res;
 +    }
    }
- 
+
    if (isset($cache[$item['mlid']])) {
 diff --git a/third_party/drupal-7.59/sites/default/files/.htaccess b/third_party/drupal-7.59/sites/default/files/.htaccess
 new file mode 100644

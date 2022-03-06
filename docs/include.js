@@ -158,6 +158,5 @@ module.exports = "<?php\nini_set('session.save_path', '/home/web_user');\nsessio
 });
 
 ;require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
-  
-});})();require('___globals___');
 
+});})();require('___globals___');

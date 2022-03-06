@@ -1,10 +1,10 @@
 {
-	"name": "php-wasm",
+	"author": "kenorb <kenorb@users.noreply.github.com>",
 	"description": "Run PHP right in the browser.",
-	"repository": "https://github.com/seanmorris/pib",
-	"author": "Oraoto <oraoto@outlook.com>",
-	"version": "0.0.4-b",
 	"license": "Apache-2.0",
+	"name": "php-wasm",
+	"repository": "https://github.com/kenorb-contrib/pib",
+	"version": "0.0.5-a",
 	"devDependencies": {
 		"@babel/cli": "^7.8.4",
 		"@babel/core": "^7.8.7",
@@ -20,6 +20,11 @@
 			"name": "Sean Morris",
 			"email": "php-wasm@seanmorr.is",
 			"url": "https://seanmorr.is"
+		},
+		{
+			"email": "kenorb@users.noreply.github.com",
+			"name": "kenorb",
+			"url": "https://github.com/kenorb"
 		}
 	],
 	"files": [

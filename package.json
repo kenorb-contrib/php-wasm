@@ -2,7 +2,7 @@
   "author": "kenorb <kenorb@users.noreply.github.com>",
   "description": "Run PHP right in the browser.",
   "license": "Apache-2.0",
-  "name": "php-wasm",
+  "name": "@kenorb/php-wasm",
   "repository": "https://github.com/kenorb-contrib/pib",
   "version": "0.0.5-a",
   "devDependencies": {

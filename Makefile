@@ -159,7 +159,6 @@ lib/lib/libxml2.la: third_party/libxml2/.gitignore
 ########### Build the final files. ###########
 FINAL_BUILD=${DOCKER_RUN_IN_PHP} emcc ${OPTIMIZE} \
 	--llvm-lto 2                     \
-	-g2 \
 	-o ../../build/php-${ENVIRONMENT}${RELEASE_SUFFIX}.js \
 	-s EXPORTED_FUNCTIONS='["_pib_init", "_pib_destroy", "_pib_run", "_pib_exec" "_pib_refresh", "_main", "_php_embed_init", "_php_embed_shutdown", "_php_embed_shutdown", "_zend_eval_string", "_exec_callback", "_del_callback"]' \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "UTF8ToString", "lengthBytesUTF8"]' \
